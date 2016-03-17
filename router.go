@@ -1,4 +1,4 @@
-package solenoid
+package gasoil
 
 import (
     "net/http"
@@ -29,18 +29,18 @@ func (n *node) addNode(method, path string, handler Handle) {
     for {
         aNode, component := n.traverse(components, nil)
 
-        if aNode.component == component && count == 1 { // update an existing node.
+        if aNode.component == component && count == 1 {
             aNode.methods[method] = handler
             return
         }
 
         newNode := node{component: component, isNamedParam: false, methods: make(map[string]Handle)}
 
-        if len(component) > 0 && component[0] == ':' { // check if it is a named param.
+        if len(component) > 0 && component[0] == ':' {
             newNode.isNamedParam = true
         }
 
-        if count == 1 { // this is the last component of the url resource, so it gets the handler.
+        if count == 1 {
             newNode.methods[method] = handler
         }
 
@@ -56,7 +56,7 @@ func (n *node) addNode(method, path string, handler Handle) {
 func (n *node) traverse(components []string, params url.Values) (*node, string) {
     component := components[0]
 
-    if len(n.children) > 0 { // no children, then bail out.
+    if len(n.children) > 0 {
         for _, child := range n.children {
             if component == child.component || child.isNamedParam {
                 if child.isNamedParam && params != nil {
@@ -65,8 +65,8 @@ func (n *node) traverse(components []string, params url.Values) (*node, string) 
 
                 next := components[1:]
 
-                if len(next) > 0 { // http://xkcd.com/1270/
-                    return child.traverse(next, params) // tail recursion is it's own reward.
+                if len(next) > 0 {
+                    return child.traverse(next, params)
                 } else {
                     return child, component
                 }
